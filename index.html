@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rautsan. | CEO of Rautopia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --glass: rgba(255,255,255,.12);
+      --btn-bg: rgba(255,255,255,.16);
+      --btn-bg-hover: rgba(255,255,255,.26);
+      --ink: #ffffff;
+      --accent1:#ff77b3; /* pink */
+      --accent2:#a66bff; /* violet */
+      --accent3:#6ecbff; /* light blue */
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --radius: 16px;
+      --iconbox: 44px; /* kotak icon kiri */
+      --maxw: 480px;
+    }
+
+    *{ box-sizing: border-box; margin: 0; padding: 0; }
+    html,body{ height:100%; }
+    body{
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background: url('assets/background.png') center/cover no-repeat fixed;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 2rem 1rem 4rem;
+      position: relative;
+      text-align: center;
+    }
+    /* overlay biar teks kontras */
+    body::before{
+      content:""; position: fixed; inset:0; z-index:-1;
+      background: linear-gradient(180deg, rgba(17, 0, 28, .55), rgba(17,0,28,.35) 30%, rgba(0,0,0,.55));
+    }
+
+    .profile-pic{
+      width: 150px; height: 150px; border-radius: 50%; object-fit: cover;
+      border: 6px solid #fff; box-shadow: var(--shadow);
+    }
+    h1{ font-family:'Rubik Mono One', monospace; font-size: clamp(1.8rem, 2.8vw, 2.3rem); letter-spacing:.5px; margin-top: .6rem;}
+    .desc{ margin-top:.45rem; opacity:.95; }
+    .live-time{ font-size:.95rem; opacity:.9; margin-top:.35rem; }
+
+    .menu{ width:100%; max-width: var(--maxw); display:flex; flex-direction:column; gap: .9rem; margin: 1.2rem auto 0; }
+
+    /* Tombol dengan kotak icon kiri & teks center */
+    .btn{
+      position: relative;
+      display: grid; grid-template-columns: var(--iconbox) 1fr var(--iconbox); align-items:center;
+      gap: 12px; width:100%; padding: 14px 12px; border-radius: var(--radius);
+      background: var(--btn-bg); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      border: 1.5px solid rgba(255,255,255,.35); color: #fff; text-decoration: none; font-weight: 700;
+      box-shadow: var(--shadow); cursor: pointer; text-align: center;
+      transition: transform .16s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ transform: translateY(-2px); background: var(--btn-bg-hover); border-color: rgba(255,255,255,.6); }
+    .btn.small{ padding: 10px 10px; font-weight: 600; border-radius: 12px; opacity:.98; }
+
+    .icon-box, .icon-ghost{ width: var(--iconbox); height: var(--iconbox); display:flex; align-items:center; justify-content:center; border-radius: 10px; background: rgba(255,255,255,.92); }
+    .icon-ghost{ background: transparent; }
+    .icon-box img{ width: 28px; height: 28px; object-fit: contain; }
+    .label{ text-align:center; font-size: 1.05rem; }
+    .small .label{ font-size: .98rem; }
+    .small .icon-box, .small .icon-ghost{ width: 38px; height: 38px; }
+    .small .icon-box img{ width: 22px; height: 22px; }
+
+    /* Dropdown chat style (Minecraft) */
+    .dropdown{ max-height:0; overflow:hidden; opacity:0; margin-top:0; transition: max-height .35s ease, opacity .3s ease, margin-top .3s ease; }
+    .dropdown.show{ max-height: 260px; opacity:1; margin-top: .6rem; }
+    .chat{
+      position: relative; background: #ffffff; color:#222; border-radius: 14px; padding: .95rem 1rem;
+      border-left: 6px solid var(--accent1); box-shadow: var(--shadow); text-align:left;
+    }
+    .chat::before{ content:""; position:absolute; top:-10px; left:18px; border:10px solid transparent; border-bottom-color:#ffffff; }
+
+    /* Baris K/V dengan ":" sejajar + tombol copy */
+    .kv-row{
+      display:grid; grid-template-columns: 58px 12px 1fr auto; align-items:center; gap:10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      margin: .15rem 0;
+    }
+    .kv-row .k{ font-weight:700; color:#333; }
+    .kv-row .colon{ color:#333; }
+    .kv-row .v{ color:#111; word-break: break-word; }
+    .copy-btn{
+      background: #f0f0f5; border: 1px solid #e2e2ee; color:#333; cursor:pointer; padding: 6px 10px;
+      border-radius: 10px; font-size:.85rem; font-weight:700; transition: background .2s ease, transform .1s ease;
+    }
+    .copy-btn:hover{ background:#e7e7f8; }
+    .copy-btn:active{ transform: scale(.98); }
+
+    /* Collapsible Sosmed (isi tombol kecil) */
+    .collapsible{ max-height:0; overflow:hidden; opacity:0; margin-top:0; transition:max-height .4s ease, opacity .35s ease, margin-top .35s ease; }
+    .collapsible.show{ max-height: 500px; opacity:1; margin-top: .55rem; }
+    .stack{ display:flex; flex-direction:column; gap:.7rem; }
+
+    /* Bubble popup di atas tombol */
+    .bubble{ position:absolute; top:0; left:0; transform: translate(-50%, -100%) translateY(-8px);
+      background:#fff; color:#222; border-radius: 12px; padding:.6rem .9rem; border-left:5px solid var(--accent2);
+      box-shadow: var(--shadow); opacity:0; transition: opacity .25s ease, transform .25s ease; z-index:1000; white-space:nowrap; }
+    .bubble.show{ opacity:1; transform: translate(-50%, -100%) translateY(-2px); }
+    .bubble::after{ content:""; position:absolute; bottom:-8px; left:50%; transform: translateX(-50%);
+      border:8px solid transparent; border-top-color:#fff; }
+
+    /* Footer */
+    footer{ width:100%; max-width: var(--maxw); margin: 1.4rem auto 0; color:#fff; }
+    .quote{ font-style: italic; opacity:.95; }
+    .reply{ margin-top:.35rem; opacity:.9; }
+
+    /* Responsive tweak */
+    @media (max-width: 420px){
+      :root{ --iconbox: 40px; --maxw: 92vw; }
+      .profile-pic{ width:125px; height:125px; border-width:5px; }
+      .btn{ padding: 12px 10px; }
+      .label{ font-size: 1rem; }
+      .small .label{ font-size: .95rem; }
+      .kv-row{ grid-template-columns: 52px 10px 1fr auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Foto Profil -->
+  <img src="assets/profile.png" alt="Foto Profil Raut" class="profile-pic" />
+
+  <!-- Nama & Deskripsi -->
+  <h1>Rautsan.</h1>
+  <div class="desc">
+    CEO of Rautopia | Live setiap hari jam 20:00 WIB
+    <div class="live-time" id="countdown">Loading countdown...</div>
+  </div>
+
+  <!-- Menu -->
+  <div class="menu">
+
+    <!-- Minecraft Server (toggle dropdown chat) -->
+    <button type="button" class="btn" id="btn-mc">
+      <span class="icon-box"><img src="assets/server.png" alt="icon server" /></span>
+      <span class="label">Minecraft Server</span>
+      <span class="icon-ghost" aria-hidden="true"></span>
+    </button>
+    <div class="dropdown" id="dropdown-mc">
+      <div class="chat">
+        <div class="kv-row">
+          <span class="k">IP</span><span class="colon">:</span>
+          <span class="v" id="ipValue">play.rautopia.my.id</span>
+          <button class="copy-btn" data-copy="#ipValue">Copy</button>
+        </div>
+        <div class="kv-row">
+          <span class="k">Port</span><span class="colon">:</span>
+          <span class="v" id="portValue">25817</span>
+          <button class="copy-btn" data-copy="#portValue">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donasi -->
+    <a class="btn" href="https://donasi.rautopia.my.id" target="_blank" rel="noopener">
+      <span class="icon-box"><img src="assets/duit.png" alt="icon donasi" /></span>
+      <span class="label">Traktir aku kopi</span>
+      <span class="icon-ghost" aria-hidden="true"></span>
+    </a>
+
+    <!-- Discord -->
+    <a class="btn" href="https://discord.rautopia.my.id" target="_blank" rel="noopener">
+      <span class="icon-box"><img src="assets/discord.png" alt="icon discord" /></span>
+      <span class="label">Join Rautopia</span>
+      <span class="icon-ghost" aria-hidden="true"></span>
+    </a>
+
+    <!-- Sosial Media (toggle collapsible tombol kecil) -->
+    <button type="button" class="btn" id="btn-sosmed">
+      <span class="icon-box"><img src="assets/world.png" alt="icon world" /></span>
+      <span class="label">Sosial Media</span>
+      <span class="icon-ghost" aria-hidden="true"></span>
+    </button>
+    <div class="collapsible" id="sosmed-menu">
+      <div class="stack">
+        <a class="btn small" href="https://www.tiktok.com/@raautsan?_t=ZS-8z3nycfdfUL&_r=1" target="_blank" rel="noopener">
+          <span class="icon-box"><img src="assets/tik-tok.png" alt="TikTok" /></span>
+          <span class="label">TikTok</span>
+          <span class="icon-ghost" aria-hidden="true"></span>
+        </a>
+        <a class="btn small" href="https://www.instagram.com/raautsan/" target="_blank" rel="noopener">
+          <span class="icon-box"><img src="assets/ig.png" alt="Instagram" /></span>
+          <span class="label">Instagram</span>
+          <span class="icon-ghost" aria-hidden="true"></span>
+        </a>
+        <a class="btn small" href="https://www.youtube.com/@raautsan" target="_blank" rel="noopener">
+          <span class="icon-box"><img src="assets/yt.png" alt="YouTube" /></span>
+          <span class="label">YouTube</span>
+          <span class="icon-ghost" aria-hidden="true"></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Book + Coffee (popup chat di atas tombol) -->
+    <a href="#" class="btn" id="btn-book">
+      <span class="icon-box"><img src="assets/book.png" alt="Book" /></span>
+      <span class="label">My Book Collection</span>
+      <span class="icon-ghost" aria-hidden="true"></span>
+    </a>
+    <a href="#" class="btn" id="btn-coffee">
+      <span class="icon-box"><img src="assets/coffee.png" alt="Coffee" /></span>
+      <span class="label">Coffee I Recommend</span>
+      <span class="icon-ghost" aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="quote">"I have a sheet full of idea, full of idea"</div>
+    <div class="reply">must be the idea sheet</div>
+  </footer>
+
+  <script>
+    // Helper toggle
+    const toggleShow = el => el.classList.toggle('show');
+
+    // Minecraft dropdown
+    const btnMc = document.getElementById('btn-mc');
+    const ddMc  = document.getElementById('dropdown-mc');
+    btnMc.addEventListener('click', ()=> toggleShow(ddMc));
+
+    // Sosmed collapsible
+    const btnSos = document.getElementById('btn-sosmed');
+    const sosMenu = document.getElementById('sosmed-menu');
+    btnSos.addEventListener('click', ()=> toggleShow(sosMenu));
+
+    // Copy buttons (IP / Port)
+    document.querySelectorAll('.copy-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const sel = btn.getAttribute('data-copy');
+        const el = document.querySelector(sel);
+        if(!el) return;
+        const text = el.textContent.trim();
+        navigator.clipboard.writeText(text).then(()=>{
+          // mini badge on button
+          const old = btn._badge; if(old) old.remove();
+          const b = document.createElement('span');
+          b.textContent = 'Copied!';
+          b.style.marginLeft = '8px';
+          b.style.fontSize = '.8rem';
+          b.style.fontWeight = '700';
+          b.style.color = '#16a34a';
+          btn.appendChild(b);
+          btn._badge = b;
+          setTimeout(()=>{ if(btn._badge){ btn._badge.remove(); btn._badge=null; } }, 1200);
+        });
+      });
+    });
+
+    // Bubble popup di atas tombol (book & coffee)
+    function showBubbleAbove(el, text){
+      const old = el._bubble; if(old){ old.remove(); }
+      const b = document.createElement('div'); b.className='bubble'; b.textContent=text; document.body.appendChild(b);
+      const r = el.getBoundingClientRect();
+      const top = window.scrollY + r.top - 10; // atas tombol
+      const left = window.scrollX + r.left + r.width/2; // tengah tombol
+      b.style.position='absolute'; b.style.top = top + 'px'; b.style.left = left + 'px';
+      requestAnimationFrame(()=> b.classList.add('show'));
+      el._bubble = b;
+      setTimeout(()=>{ b.classList.remove('show'); setTimeout(()=>{ b.remove(); el._bubble=null; }, 240); }, 1600);
+    }
+    document.getElementById('btn-book').addEventListener('click', function(e){ e.preventDefault(); showBubbleAbove(this, 'Oops!! halaman belum dibangun nih ;)'); });
+    document.getElementById('btn-coffee').addEventListener('click', function(e){ e.preventDefault(); showBubbleAbove(this, 'Oops!! halaman belum dibangun nih ;)'); });
+
+// Countdown ke jam 20:00 WIB (Asia/Jakarta), robust di semua timezone
+function nowInJakarta(){
+  // Buat Date dari string waktu Jakarta → objek Date lokal utk selisih yang konsisten
+  return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
+}
+
+function updateCountdown(){
+  const nowJKT = nowInJakarta();            // waktu sekarang di Jakarta
+  const target = new Date(nowJKT);          // clone utk target
+  target.setHours(20,0,0,0);                // set target = jam 20:00 WIB hari ini
+
+  // kalau waktu sekarang sudah lewat jam 20:00 → target geser ke hari berikutnya
+  if (nowJKT > target) target.setDate(target.getDate() + 1);
+
+  const diff = target - nowJKT;             // selisih ms sampai target
+  const h = Math.floor(diff / 3600000);     // jam
+  const m = Math.floor((diff % 3600000) / 60000); // menit
+  const s = Math.floor((diff % 60000) / 1000);    // detik
+  const pad = n => String(n).padStart(2,'0');
+
+  // Kalau sekarang >= 20:00 WIB → anggap sedang live
+  if (nowJKT.getHours() >= 20) {
+    document.getElementById('countdown').textContent = "🔴 Sedang Live!";
+  } else {
+    document.getElementById('countdown').textContent =
+      `Live mulai dalam ${pad(h)}j ${pad(m)}m ${pad(s)}d`;
+  }
+}
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
